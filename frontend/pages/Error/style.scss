@@ -1,0 +1,12 @@
+@use '@Commn/colors' as *;
+
+.error-page {
+  display: flex;
+  flex-direction: column;
+
+  color: $defaultThemeRed;
+
+  h1 {
+    color: $defaultThemeAccentDark;
+  }
+}

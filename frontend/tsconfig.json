@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    "target": "es2015",
+    "useDefineForClassFields": true,
+    "lib": ["es2020", "dom", "dom.iterable"],
+    "module": "esnext",
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "node",
+    // Node resolution first looks for modules in the node_modules directory of the current file’s directory,
+    // and then proceeds to search in parent directories until it reaches the root of the file system.
+    // It also considers the main field specified in the package.json file of each module to determine the entry point.
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    "baseUrl": ".",
+    "paths": {
+        "@API/*": ["api/*"],
+        "@Commn/*": ["commons/*"],
+        "@Store/*": ["store/*"]
+    },
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["vite.config.ts"],
+  "references": [{ "path": "./tsconfig.dev.json" }]
+}
