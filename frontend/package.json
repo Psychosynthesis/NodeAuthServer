@@ -13,7 +13,7 @@
     "url": "git+https://github.com/Psychosynthesis/TeleUI.git"
   },
   "scripts": {
-    "dev": "vite --host",
+    "dev": "vite --host --open",
     "build": "vite build --emptyOutDir",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

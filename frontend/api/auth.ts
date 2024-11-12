@@ -21,6 +21,6 @@ export const register = ({
 }
 
 export const getUser = (token: string) => {
-	const user = requestWrapper({ url: 'api/auth/getUser', method: 'GET', headers: { 'authorization': 'Bearer '+token } })
+	const user = requestWrapper({ url: 'api/auth/getUser', method: 'GET', headers: { 'X-csrf-token': token } })
 	return user;
 }

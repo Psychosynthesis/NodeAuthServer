@@ -11,7 +11,7 @@ export const List = () => {
 
   return (
     <div className="list">
-      <h2 style={{ textAlign: 'center' }}>List</h2>
+      <h2 style={{ textAlign: 'center' }}>Example List</h2>
 
     </div>
   );

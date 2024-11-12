@@ -4,5 +4,9 @@
 export const MONGODB_URI = 'mongodb://USER:PASS@SERVER:PORT/DBNAME&retryWrites=true&serverSelectionTimeoutMS=10000';
 
 export const ACCESS_TOKEN_SECRET = 'access_token_secret'
-export const ALLOWED_ORIGIN = 'http://localhost:5173' // Не забыть поменять для разработки
+
+export const ALLOWED_ORIGIN = [ // Не забыть поменять для прода
+  'http://localhost:3000', 'http://127.0.0.1:3000', 'http://localhost:5000', 'http://127.0.0.1:5000'
+];
+
 export const SENTRY_DSN = 'sentry_dsn'

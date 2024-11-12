@@ -21,8 +21,13 @@ const userSchema = new Schema(
       select: false
     },
     sessionStart: {
+      type: Number, // Microseconds - new Date().getTime()
+      required: false,
+      default: 0,
+    },
+    loginAttempt: {
       type: Number,
-      required: true,
+      required: false,
       default: 0,
     },
     role: {

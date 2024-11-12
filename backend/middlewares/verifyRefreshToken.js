@@ -16,8 +16,7 @@ const PUBLIC_KEY = readFileSync('./config/public_key.pem', 'utf-8')
 export const verifyRefreshToken = async (req, res, next) => {
   const refreshToken = req.cookies[REFRESH_COOKIE_NAME];
   if (!refreshToken) {
-    console.log('No refresh token');
-    return res.status(403).json({ message: 'No refresh token' });
+    return res.status(403).json({ message: 'No refresh' }); // Токена нет
   }
 
   try {

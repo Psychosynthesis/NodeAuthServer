@@ -6,16 +6,27 @@ const devPrefix = import.meta.env.DEV ?
 	'http://127.0.0.1:'+SERVER_PORT+'/' :
 	'http://127.0.0.1:'+SERVER_PORT+'/';
 
-const defaultHeaders = {
-	"Content-Type": "application/json",
-	"x-verification-code": VERIFICATION_CODE
-};
+const buildHeaders = (addedHeaders) => {
+	const myHeaders = new Headers();
+	myHeaders.append('Content-Type', 'application/json');
+	myHeaders.append("X-verification-code", VERIFICATION_CODE)
+	if (addedHeaders) {
+		console.log('Add custom headers')
+
+		Object.keys(addedHeaders).forEach(header => {
+			console.log('Add header: ', header, addedHeaders[header])
+
+			myHeaders.append(header, addedHeaders[header]);
+		})
+	}
+	return myHeaders;
+}
 
 export const requestWrapper = ({ url, method, headers, body }: AppRequestWrapper) => {
   return window.fetch(devPrefix+url, {
       method: method,
-      headers: { ...defaultHeaders, ...headers },
-			credentials: "include",
+      headers: buildHeaders(headers),
+			credentials: "include", // Чтобы передавалась кука с рефреш-токеном
       body: JSON.stringify(body)
   }).then(response => {
     if (!response.ok) { return Promise.reject(response); }

@@ -13,7 +13,7 @@ export const useAPI = () => {
     updateToken: async () => {
       try {
         const response = await updateToken();
-        if (response.error) {
+        if (response.error || !response.data) {
           return { ...defaultResponse, message: response.message };
         }
         return { ...defaultResponse, error: false, data: response.data };
@@ -24,7 +24,7 @@ export const useAPI = () => {
     register: async (params) => {
       try {
         const response = await register(params)
-        if (response.error) {
+        if (response.error || !response.data) {
           return { ...defaultResponse, message: response.message };
         }
         return { ...defaultResponse, error: false, data: response.data };
@@ -35,7 +35,7 @@ export const useAPI = () => {
     login: async (params) => {
       try {
         const response = await login(params);
-        if (!response.data?.token || response.error) {
+        if (!response.data || !response.data?.token || response.error) {
           return { ...defaultResponse, message: response.message };
         }
         return { ...defaultResponse, error: false, data: response.data };
@@ -47,7 +47,7 @@ export const useAPI = () => {
       try {
         if (!state.token) { throw new Error('No token!') }
         const response = await getUser(state.token);
-        if (response.error) {
+        if (!response.data || response.error) {
           return { ...defaultResponse, message: response.message };
         }
         return { ...defaultResponse, error: false, data: response.data };

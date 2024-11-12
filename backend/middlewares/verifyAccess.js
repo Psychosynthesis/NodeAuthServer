@@ -3,10 +3,9 @@ import { ACCESS_TOKEN_SECRET } from '../config/index.js'
 import { verifyToken } from '../utils/token.js'
 
 export const verifyAccess = async (req, res, next) => {
-  const accessToken = req.headers.authorization?.split(' ')[1]
-
+  const accessToken = req.headers['x-csrf-token'];
   if (!accessToken) {
-    return res.status(403).json({ message: 'No access token' })
+    return res.status(403).json({ message: 'No access token' }); // Токена нет
   }
 
   try {
@@ -23,7 +22,7 @@ export const verifyAccess = async (req, res, next) => {
       throw new Error('TokenExpiredError');
     }
 
-    req.user = decoded
+    req.user = userData;
     next()
   } catch (e) {
     if (e.name === 'TokenExpiredError' || e.message === 'TokenExpiredError') {

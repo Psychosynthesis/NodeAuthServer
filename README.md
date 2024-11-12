@@ -25,7 +25,6 @@ _Обратите внимание_, данный шаблон - это всег
 - [`mongoose`](https://www.npmjs.com/package/mongoose) - [`ORM`](https://ru.wikipedia.org/wiki/ORM) для `MongoDB`. [Здесь](https://github.com/harryheman/React-Total/blob/main/md/mongoose.md) вы найдете руководство по работе с этой `ORM`
 - [`jsonwebtoken`](https://www.npmjs.com/package/jsonwebtoken) - утилита для работы с токенами. [Здесь](https://github.com/harryheman/React-Total/blob/main/md/jsonwebtoken.md) вы найдете шпаргалку по работе с этой утилитой
 - [`helmet`](https://www.npmjs.com/package/helmet) - утилита для установки `HTTP-заголовков`, связанных с безопасностью. [Здесь](https://github.com/harryheman/React-Total/blob/main/md/helmet.md) вы найдете шпаргалку по работе с этой утилитой, а [здесь](https://github.com/harryheman/React-Total/blob/main/md/security/security.md) - шпаргалку и туториал по заголовкам безопасности
-- [`cors`](https://www.npmjs.com/package/cors) - утилита для установки `HTTP-заголовков`, связанных с [`CORS`](https://developer.mozilla.org/ru/docs/Web/HTTP/CORS). [Здесь](https://github.com/harryheman/React-Total/blob/main/md/cors.md) вы найдете шпаргалку по работе с этой утилитой
 - [`cookie-parser`](https://www.npmjs.com/package/cookie-parser) - утилита для разбора куки, содержащихся в запросе
 - [`cross-env`](https://www.npmjs.com/package/cross-env) - утилита для установки переменных среды окружения
 

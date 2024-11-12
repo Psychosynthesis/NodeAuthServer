@@ -7,20 +7,21 @@ import CONFIG from '../../commons/config.json' assert { type: 'json' };
 const { REFRESH_COOKIE_NAME } = CONFIG;
 
 export const getUser = async (req, res, next) => {
-  const userId = req.user?.userId
+  const userId = req.user?.id
   if (!userId) {
     return res.status(400).json({ message: 'User ID must be provided' })
   }
 
   try {
-    const user = await getUserById(userId);
-    if (!user) {
-      console.log('Something went wrong, no user found in DB', req.user);
+    const userData = await getUserById(userId);
+    if (!userData) {
+      console.log('Something went wrong, no user found in DB: ', req.user);
       return res.status(403).json({ message: 'Something went wrong, no user found in DB' });
     }
 
-    req.user = user
-    next('route')
+    res.status(200).json({
+      user: { userId: userData.id, username: userData.username, email: userData.email },
+    });
   } catch (e) {
     console.error('getUser service error: ')
     next(e)
@@ -78,11 +79,22 @@ export const loginUser = async (req, res, next) => {
       return res.status(404).json({ message: 'User not found' })
     }
 
+    if (user.loginAttempt === -1) { // setTimeout уже вызывали
+      return res.status(403).json({ message: 'Too many login attempts. User blocked, try again later.' })
+    } else if (user.loginAttempt > 3) {
+      await User.findByIdAndUpdate(user.id, { loginAttempt: -1 }) // Чтобы не вызывать setTimeout слишком часто
+      setTimeout(() => dropLoginAttempts(user.id), 3600000);
+      return res.status(403).json({ message: 'Too many login attempts. User blocked, try again later.' })
+    }
+
     const isPasswordCorrect = await verifyHash(password, user.password, user.username+user.email)
 
     if (!isPasswordCorrect) {
+      await User.findByIdAndUpdate(user.id, { loginAttempt: user.loginAttempt + 1 })
       return res.status(403).json({ message: 'Wrong credentials' })
     }
+
+    await User.findByIdAndUpdate(user.id, { loginAttempt: 0 })
 
     req.user = { username: user.username, userId: user.id, /* email: user.email, role: user.role */ }
     // Не отправляем данные пользователя при логине, т.к. в текущем фронтенде авторизация выделена в отдельное приложение
@@ -103,6 +115,14 @@ export const logoutUser = async (req, res, next) => {
   res.status(200).json({ message: 'User has been logout' })
 }
 
+export const dropLoginAttempts = async (userId) => {
+  try {
+    await User.findByIdAndUpdate(userId, { loginAttempt: 0 });
+  } catch (e) {
+    console.error(`dropLoginAttempts for userId ${userId} fail: `, e);
+  }
+}
+
 export const removeUser = async (req, res, next) => {
   const username = req.body?.username
 
@@ -118,11 +138,9 @@ export const removeUser = async (req, res, next) => {
 
     await user.remove()
 
-    res
-      .status(200)
-      .json({ message: `User ${username} has been removed` })
+    res.status(200).json({ message: `User ${username} has been removed` })
   } catch (e) {
-    console.log('*removeUser service')
+    console.log('removeUser service')
     next(e)
   }
 }

@@ -1,19 +1,21 @@
 // import helmet from 'helmet'
 // import * as Sentry from '@sentry/node'
 // import * as Tracing from '@sentry/tracing'
-import cookieParser from 'cookie-parser'
-import cors from 'cors'
-import express, { json, urlencoded } from 'express'
-import mongoose from 'mongoose'
+import cookieParser from 'cookie-parser';
+import express, { json, urlencoded } from 'express';
+import cors from 'cors';
+import mongoose from 'mongoose';
 import { stringify } from 'flatted';
 // import bodyParser from 'body-parser';
 
-import { ALLOWED_ORIGIN, MONGODB_URI, /* SENTRY_DSN, */ } from './config/index.js'
+import { ALLOWED_ORIGIN, MONGODB_URI, /* SENTRY_DSN, */ } from './config/index.js';
 import CONFIG from '../commons/config.json' assert { type: 'json' };
 const { SERVER_PORT } = CONFIG;
 
-import { checkHasRefresh, setCookie, setSecurityHeaders } from './middlewares/index.js'
-import apiRoutes from './routes/api.router.js'
+import { checkHasRefresh, setCookie, setSecurityHeaders, verifyClient } from './middlewares/index.js';
+
+import authRouter from './routes/auth.router.js';
+import interfaceRouter from './routes/interface.router.js';
 
 const app = express();
 app.disable('x-powered-by'); // Remove unnecs header
@@ -34,17 +36,12 @@ if (process.env.NODE_ENV === 'production') {
 }
 */
 
-app.use(cors({ origin: ALLOWED_ORIGIN, credentials: true }))
-
 // app.use(helmet())
-app.use(cookieParser())
-app.use(setSecurityHeaders)
+app.use(cookieParser());
+app.use(setSecurityHeaders);
 
-app.use('/api', apiRoutes);
-app.use('/login', express.static('./public/auth/index.html'));
-app.use('/register', express.static('./public/auth/index.html'));
-app.use('/list', checkHasRefresh, express.static('./public'));
-app.use('/', express.static('./public'));
+app.use('/', interfaceRouter);
+app.use('/api/auth', cors({ origin: ALLOWED_ORIGIN, credentials: true }), verifyClient, authRouter);
 
 if (MONGODB_URI) {
   try {
@@ -62,10 +59,7 @@ if (MONGODB_URI) {
 if (process.env.NODE_ENV === 'production') {
   // app.use(Sentry.Handlers.errorHandler())
 } else {
-  app.use('/api', (err, req, res, next) => {
-    console.error(`${err.message || stringify(err, null, 2)}`)
-    res.status(500).json({ message: 'Something went wrong. Try again later' })
-  });
+
 }
 
 app.listen(SERVER_PORT || 3000, () => {

@@ -18,18 +18,20 @@ export const BasicLayout = () => {
       window.location.replace("/login");
     } else {
       API.updateToken().then(res => {
-        console.log('updateToken: ', res)
         if (res.error === false) {
           console.log('ТОКЕН ОБНОВЛЁН: ', res.data)
           dispatch({ type: 'setToken', load: res.data?.token });
+        } else {
+          window.location.href = '/login';
+          // window.location.reload();
         }
       });
     }
   }, []);
 
   useEffect(() => {
-    console.log('token is: ', token);
     if (token) {
+      console.log('token is: ', token);
       API.getUser().then(res => {
         console.log('res is: ', res)
         if (res.error === false) {
@@ -42,13 +44,13 @@ export const BasicLayout = () => {
   }, [token]);
 
   return (
-    <>
+    <div className="main-layout">
       {state?.user &&
         <div>
           User: { state.user.username }
         </div>
       }
       <Outlet />
-    </>
+    </div>
   );
 }
