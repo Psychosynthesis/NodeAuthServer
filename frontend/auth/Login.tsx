@@ -21,7 +21,7 @@ export const Login = () => {
         if (loginResponse?.error === false) {
           window.localStorage.setItem('session', String(new Date().getTime()));
           setError('Вы будете перенаправлены. Если перенаправление не работает, перейдите на адрес /list');
-          setTimeout(() => { window.location.replace("/list"); }, 1000); // Чтобы успеть обновить рефреш на гет-запросе
+          setTimeout(() => { window.location.replace("/list"); }, 1000); // Чтобы успеть обновить refreshToken на гет-запросе
         } else {
           setError(loginResponse?.message ?? 'Неизвестная ошибка');
         }

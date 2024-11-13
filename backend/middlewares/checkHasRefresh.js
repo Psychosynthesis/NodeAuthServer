@@ -17,7 +17,8 @@ export const checkHasRefresh = async (req, res, next) => {
 
   if (req.method !== 'GET' || (process.env.NODE_ENV !== 'production')) {
     // Это нужно только для GET-методов, чтобы закрыть основную часть интерфейса от тех, кто никогда не логинился
-    return next(); // Не знаю почему это не работает...
+    // Всё это нужно тестировать
+    return next();
   }
 
   if (!refreshToken) {

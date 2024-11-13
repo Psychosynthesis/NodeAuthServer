@@ -6,6 +6,8 @@ import type { ServerResponse } from '@Commn/types';
 
 const defaultResponse: ServerResponse = { error: true, data: null };
 
+// TODO: Написать обёртку, чтобы стандартизировать обработку ошибок и проверку\обновление токена
+
 export const useAPI = () => {
   const [ state, dispatch ] = useCommonStore();
 
