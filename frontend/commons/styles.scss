@@ -23,9 +23,13 @@ pre {
 }
 
 .main-layout {
-  padding-top: 40px;
+  padding-top: 20px;
 }
 
 .component-row {
   margin-bottom: 50px;
+}
+
+.header-row {
+  display: flex; align-items: center; justify-content: space-between;
 }

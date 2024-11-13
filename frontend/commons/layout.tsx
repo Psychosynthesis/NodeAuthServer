@@ -1,29 +1,39 @@
 import { useEffect } from 'react';
 import { Outlet } from "react-router-dom";
+import { Button } from 'teleui';
 import { getCookie } from 'vanicom';
 
 // import Languages from '@Commn/localization';
 import { useAPI } from '@API';
 import { useCommonStore } from '@Store'
 
+const redirectToLogin = () => window.location.replace("/login");
+
 export const BasicLayout = () => {
   const API = useAPI();
   const [ state, dispatch ] = useCommonStore();
   const { token } = state;
 
+  const logoutHandler = () => {
+    API.logout().then(response => {
+      if (response.error === false) {
+        dispatch({ type: 'clearUserData' });
+        dispatch({ type: 'setToken', load: '' });
+        redirectToLogin();
+      }
+    })
+  }
+
   useEffect(() => {
     const hash = getCookie('hash');
-    console.log('hash is: ', hash);
     if (!hash) {
-      window.location.replace("/login");
+      redirectToLogin();
     } else {
       API.updateToken().then(res => {
         if (res.error === false) {
-          console.log('ТОКЕН ОБНОВЛЁН: ', res.data)
           dispatch({ type: 'setToken', load: res.data?.token });
         } else {
-          window.location.href = '/login';
-          // window.location.reload();
+          redirectToLogin();
         }
       });
     }
@@ -31,13 +41,13 @@ export const BasicLayout = () => {
 
   useEffect(() => {
     if (token) {
-      console.log('token is: ', token);
       API.getUser().then(res => {
-        console.log('res is: ', res)
         if (res.error === false) {
           dispatch({ type: 'setUserData', load: res.data?.user })
         } else {
-          console.error(res.message);
+          dispatch({ type: 'clearUserData' })
+          dispatch({ type: 'setToken', load: '' })
+          redirectToLogin();
         }
       });
     }
@@ -46,8 +56,9 @@ export const BasicLayout = () => {
   return (
     <div className="main-layout">
       {state?.user &&
-        <div>
-          User: { state.user.username }
+        <div className="header-row">
+          <div>User: { state.user.username }</div>
+          <div><Button onClick={logoutHandler}>Выйти</Button></div>
         </div>
       }
       <Outlet />

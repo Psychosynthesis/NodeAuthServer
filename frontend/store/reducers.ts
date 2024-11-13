@@ -1,10 +1,15 @@
 import { StoreType, Action } from "./types";
+import { initStore } from './index';
 
 export const appReducer = (state: StoreType, action: Action) => {
   switch (action.type) {
   	case 'setUserData': {
   	  return { ...state, user: action.load }
   	}
+
+    case 'clearUserData': {
+      return { ...state, user: { ...initStore.user } }
+    }
 
     case 'setToken': {
       return { ...state, token: action.load }

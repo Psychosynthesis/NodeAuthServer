@@ -1,6 +1,6 @@
 import { useCommonStore } from '@Store'
 
-import { updateToken, getUser, register, login } from './auth';
+import * as APIendpoints from './auth';
 
 import type { ServerResponse } from '@Commn/types';
 
@@ -12,7 +12,7 @@ export const useAPI = () => {
   return {
     updateToken: async () => {
       try {
-        const response = await updateToken();
+        const response = await APIendpoints.updateToken();
         if (response.error || !response.data) {
           return { ...defaultResponse, message: response.message };
         }
@@ -23,7 +23,7 @@ export const useAPI = () => {
     },
     register: async (params) => {
       try {
-        const response = await register(params)
+        const response = await APIendpoints.register(params)
         if (response.error || !response.data) {
           return { ...defaultResponse, message: response.message };
         }
@@ -34,8 +34,20 @@ export const useAPI = () => {
     },
     login: async (params) => {
       try {
-        const response = await login(params);
+        const response = await APIendpoints.login(params);
         if (!response.data || !response.data?.token || response.error) {
+          return { ...defaultResponse, message: response.message };
+        }
+        return { ...defaultResponse, error: false, data: response.data };
+      } catch (err) {
+        return (err as Error).message;
+      }
+    },
+    logout: async () => {
+      try {
+        if (!state.token) { throw new Error('No token!') }
+        const response = await APIendpoints.logout(state.token);
+        if (!response.data || response.error) {
           return { ...defaultResponse, message: response.message };
         }
         return { ...defaultResponse, error: false, data: response.data };
@@ -46,7 +58,7 @@ export const useAPI = () => {
     getUser: async () => {
       try {
         if (!state.token) { throw new Error('No token!') }
-        const response = await getUser(state.token);
+        const response = await APIendpoints.getUser(state.token);
         if (!response.data || response.error) {
           return { ...defaultResponse, message: response.message };
         }

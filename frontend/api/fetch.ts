@@ -11,11 +11,7 @@ const buildHeaders = (addedHeaders) => {
 	myHeaders.append('Content-Type', 'application/json');
 	myHeaders.append("X-verification-code", VERIFICATION_CODE)
 	if (addedHeaders) {
-		console.log('Add custom headers')
-
 		Object.keys(addedHeaders).forEach(header => {
-			console.log('Add header: ', header, addedHeaders[header])
-
 			myHeaders.append(header, addedHeaders[header]);
 		})
 	}

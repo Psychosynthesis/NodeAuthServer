@@ -6,7 +6,7 @@ import { StoreType, Dispatch, AppStoreProviderProps, StoreManagerType } from './
 const AppStateContext = createContext<StoreType | undefined>(undefined)
 const AppDispatchContext = createContext<Dispatch | undefined>(undefined)
 
-const initStore = {
+export const initStore = {
   user: {
     username: null,
     userId: null,

@@ -83,7 +83,7 @@ export const loginUser = async (req, res, next) => {
       return res.status(403).json({ message: 'Too many login attempts. User blocked, try again later.' })
     } else if (user.loginAttempt > 3) {
       await User.findByIdAndUpdate(user.id, { loginAttempt: -1 }) // Чтобы не вызывать setTimeout слишком часто
-      setTimeout(() => dropLoginAttempts(user.id), 3600000);
+      setTimeout(() => dropLoginAttempts(user.id), 900000);
       return res.status(403).json({ message: 'Too many login attempts. User blocked, try again later.' })
     }
 
@@ -118,6 +118,7 @@ export const logoutUser = async (req, res, next) => {
 export const dropLoginAttempts = async (userId) => {
   try {
     await User.findByIdAndUpdate(userId, { loginAttempt: 0 });
+    console.log(`UserID ${userId} login attempts dropped;`);
   } catch (e) {
     console.error(`dropLoginAttempts for userId ${userId} fail: `, e);
   }
