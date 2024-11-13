@@ -10,7 +10,7 @@ export const useAPI = () => {
   const [ state, dispatch ] = useCommonStore();
 
   return {
-    updateToken: async () => {
+    updateToken: async () => { // Обновить токен доступа (используется токен обновления в куках)
       try {
         const response = await APIendpoints.updateToken();
         if (response.error || !response.data) {
@@ -34,11 +34,16 @@ export const useAPI = () => {
     },
     login: async (params) => {
       try {
-        const response = await APIendpoints.login(params);
-        if (!response.data || !response.data?.token || response.error) {
-          return { ...defaultResponse, message: response.message };
-        }
-        return { ...defaultResponse, error: false, data: response.data };
+        const response = await APIendpoints.login(params).then((response) => {
+          if (!response.data || !response.data?.token || response.error) {
+            return { ...defaultResponse, message: response.message };
+          } else {
+            APIendpoints.getUser(response.data.token); // Нужно, чтобы обновить refreshToken
+            return { ...defaultResponse, error: false, data: response.data }
+          }
+        });
+
+        return response;
       } catch (err) {
         return (err as Error).message;
       }

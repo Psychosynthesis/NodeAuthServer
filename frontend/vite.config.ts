@@ -49,7 +49,8 @@ export default defineConfig(({ mode }) => {
         '@': path.resolve(__dirname, '.'),
         '@API': path.resolve(__dirname, './api'),
         '@Commn': path.resolve(__dirname, './commons'),
-        '@Store': path.resolve(__dirname, './store'),
+        '@Config': path.resolve(__dirname, '../commons/config.json'),
+        '@Store': path.resolve(__dirname, './store')
       },
     },
     define: {

@@ -4,7 +4,7 @@ import { hashPass, verifyHash } from '../utils/hasp.js'
 import { ACCESS_TOKEN_SECRET } from '../config/index.js'
 
 import CONFIG from '../../commons/config.json' assert { type: 'json' };
-const { REFRESH_COOKIE_NAME } = CONFIG;
+const { REFRESH_COOKIE_NAME, USERNAME_LENGTH } = CONFIG;
 
 export const getUser = async (req, res, next) => {
   const userId = req.user?.id
@@ -29,7 +29,7 @@ export const getUser = async (req, res, next) => {
 }
 
 export const registerUser = async (req, res, next) => {
-  const username = req.body?.username
+  const username = req.body?.username.toLowerCase().substr(0, USERNAME_LENGTH);
   const email = req.body?.mail
   const password = req.body?.pass
   // const role = req.body?.role
@@ -65,7 +65,7 @@ export const registerUser = async (req, res, next) => {
 }
 
 export const loginUser = async (req, res, next) => {
-  const username = req.body?.username
+  const username = req.body?.username.toLowerCase().substr(0, USERNAME_LENGTH);
   const password = req.body?.pass
 
   if (!username || !password) {
@@ -125,7 +125,7 @@ export const dropLoginAttempts = async (userId) => {
 }
 
 export const removeUser = async (req, res, next) => {
-  const username = req.body?.username
+  const username = req.body?.username.toLowerCase().substr(0, USERNAME_LENGTH);
 
   if (!username) {
     return res.status(400).json({ message: 'Username must be provided' })

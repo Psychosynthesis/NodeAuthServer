@@ -1,6 +1,13 @@
+import { readFileSync } from 'fs'
+
 import { getUserById, User } from '../models/User.js'
 import { ACCESS_TOKEN_SECRET } from '../config/index.js'
-import { verifyToken } from '../utils/token.js'
+import { verifyToken, signToken } from '../utils/token.js'
+
+import CONFIG from '../../commons/config.json' assert { type: 'json' };
+const { REFRESH_COOKIE_NAME } = CONFIG;
+
+const PRIVATE_KEY = readFileSync('./config/private_key.pem', 'utf8')
 
 export const verifyAccess = async (req, res, next) => {
   const accessToken = req.headers['x-csrf-token'];
@@ -21,6 +28,20 @@ export const verifyAccess = async (req, res, next) => {
     if (!isLogged) { // Пользователь ранее разлогинился
       throw new Error('TokenExpiredError');
     }
+
+    // Обновим токен обновления, чтобы не было ошибок при GET-запросах
+    const refreshToken = await signToken(
+      { userId: userData.id },
+      PRIVATE_KEY,
+      { algorithm: 'RS256', expiresIn: '2d' }
+    )
+
+    res.cookie(REFRESH_COOKIE_NAME, refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+      origin: 'http://localhost:3000', // Проверить
+    })
 
     req.user = userData;
     next()

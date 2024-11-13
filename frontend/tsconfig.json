@@ -21,6 +21,7 @@
     "paths": {
         "@API/*": ["api/*"],
         "@Commn/*": ["commons/*"],
+        "@Config": ["../commons/config.json"],
         "@Store/*": ["store/*"]
     },
 

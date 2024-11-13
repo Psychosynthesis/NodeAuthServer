@@ -35,20 +35,18 @@ export const setCookie = async (req, res, next) => {
       { expiresIn: '1h' }
     )
 
-    let refreshToken
-    if (!req.cookies[REFRESH_COOKIE_NAME]) {
-      refreshToken = await signToken({ userId: user.userId }, PRIVATE_KEY, {
-        algorithm: 'RS256',
-        expiresIn: '2d'
-      })
+    const refreshToken = await signToken(
+      { userId: user.userId },
+      PRIVATE_KEY,
+      { algorithm: 'RS256', expiresIn: '2d' }
+    )
 
-      res.cookie(REFRESH_COOKIE_NAME, refreshToken, {
-        httpOnly: true,
-        secure: true,
-        sameSite: 'none',
-        origin: 'http://localhost:3000', // Проверить
-      })
-    }
+    res.cookie(REFRESH_COOKIE_NAME, refreshToken, {
+      httpOnly: true,
+      secure: 'true', // В проде передаём куки только по HTTPS
+      sameSite: 'None',
+      origin: 'http://localhost:3000', // Проверить
+    })
 
     await User.findByIdAndUpdate(userData.userId, { sessionStart: new Date().getTime() })
 

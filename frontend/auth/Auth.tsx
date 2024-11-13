@@ -1,7 +1,8 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom/client';
-
+import { StrictMode, useEffect } from 'react';
+import { createRoot } from 'react-dom/client';
 import { Tabs } from 'teleui';
+
+import { useAPI } from '@API';
 import { AppStoreProvider } from '@Store';
 
 import { Register } from './Register';
@@ -13,7 +14,22 @@ import './style.scss';
 const container = document.getElementById('main-node');
 
 export const Auth = () => {
+  const API = useAPI();
   const tabIndex = window.location.href.includes('login') ? 0 : 1;
+
+  useEffect(() => {
+    const sessionStart = +window.localStorage.getItem('session');
+    if (!sessionStart) { // Если ранее не запоминали старт сессии, то можно не долбиться в АПИ
+      API.updateToken().then(res => { // Пытаемся обновить токен доступа, если работает, значит юзер уже залогинен
+        window.localStorage.setItem('session', String(new Date().getTime()));
+        if (!import.meta.env.DEV) { // Только для прода, так как Auth включена в код на деве и будет кольцевой редирект
+          if (res.error === false) {
+            window.location.replace("/list");
+          }
+        }
+      })
+    }
+  }, []);
 
   return (
     <div className="auth-form main-layout">
@@ -33,10 +49,10 @@ export const Auth = () => {
 }
 
 // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-ReactDOM.createRoot(container!).render(
-    <React.StrictMode>
-      <AppStoreProvider>
-        <Auth />
-      </AppStoreProvider>
-    </React.StrictMode>,
+createRoot(container!).render(
+  <StrictMode>
+    <AppStoreProvider>
+      <Auth />
+    </AppStoreProvider>
+  </StrictMode>,
 )

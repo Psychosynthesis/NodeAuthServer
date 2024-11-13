@@ -19,6 +19,9 @@ import interfaceRouter from './routes/interface.router.js';
 
 const app = express();
 app.disable('x-powered-by'); // Remove unnecs header
+mongoose.set('strictQuery', true);
+// При true, при ошибке в названии свойства будут возвращаться все документы, что может привести к снижению производительности и проблемам с безопасностью
+// Если strictQuery равен false, то при запросе по полю, которое не указано в схеме, Mongoose не будет удалять это поле из фильтра запроса
 
 /*
 if (process.env.NODE_ENV === 'production') {
@@ -59,7 +62,11 @@ if (MONGODB_URI) {
 if (process.env.NODE_ENV === 'production') {
   // app.use(Sentry.Handlers.errorHandler())
 } else {
-
+  app.use((err, req, res, next) => {
+    // Непонятно нужно это или нет
+    console.log(`${err.message || stringify(err, null, 2)}`);
+    res.status(500).json({ message: 'Something went wrong. Try again later' })
+  })
 }
 
 app.listen(SERVER_PORT || 3000, () => {

@@ -14,9 +14,10 @@ const PUBLIC_KEY = readFileSync('./config/public_key.pem', 'utf-8')
 
 export const checkHasRefresh = async (req, res, next) => {
   const refreshToken = req.cookies[REFRESH_COOKIE_NAME];
-  if (req.method !== 'GET') {
+
+  if (req.method !== 'GET' || (process.env.NODE_ENV !== 'production')) {
     // Это нужно только для GET-методов, чтобы закрыть основную часть интерфейса от тех, кто никогда не логинился
-    next();
+    return next(); // Не знаю почему это не работает...
   }
 
   if (!refreshToken) {
@@ -24,6 +25,8 @@ export const checkHasRefresh = async (req, res, next) => {
   }
 
   try {
+    console.log('Requested resource: ',  req.originalUrl);
+    console.log('refreshToken: ', refreshToken);
     const decoded = await verifyToken(refreshToken, PUBLIC_KEY);
     // Если токен не просрочен, но пользователь уже вышел далее нужно проверить, не разлогинивало ли его принудительно
     const userData = await getUserById(decoded.userId);
@@ -35,14 +38,17 @@ export const checkHasRefresh = async (req, res, next) => {
     next()
   } catch (e) {
     if (e.name === 'JsonWebTokenError') {
+      console.log('JsonWebTokenError')
       res.clearCookie(REFRESH_COOKIE_NAME);
       return res.redirect('/login'); // Токен не валиден, редирект
     } else if (e.name === 'TokenExpiredError') {
+      res.clearCookie(REFRESH_COOKIE_NAME);
+      console.log('TokenExpiredError')
       // Токен валиден, но просрочен, можно показывать интерфейс
-      next();
+      return next();
+    } else {
+      console.log('checkHasRefresh middleware error')
+      next(e);
     }
-
-    console.log('checkHasRefresh middleware')
-    next(e)
   }
 }

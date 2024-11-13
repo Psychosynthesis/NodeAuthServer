@@ -1,4 +1,4 @@
-import { VERIFICATION_CODE, SERVER_PORT } from '../../commons/config.json';
+import { VERIFICATION_CODE, SERVER_PORT } from '@Config';
 import type { AppRequestWrapper } from '@Commn/types';
 
 //@ts-ignore
